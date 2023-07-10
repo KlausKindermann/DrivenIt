@@ -9,8 +9,10 @@ export async function getPaymentByTicketId (req: AuthenticatedRequest, res: Resp
         const ticketId = Number(req.query.ticketId);
         const {userId} = req;
         if(!ticketId) return res.sendStatus(httpStatus.BAD_REQUEST);
+
         const payment = await paymentsService.getPaymentByTicketId(userId, ticketId);
         if(!payment) return res.sendStatus(httpStatus.NOT_FOUND);
+
         return res.status(httpStatus.OK).send(payment);
     } catch (error){
         if (error.name === 'UnauthorizedError') {
@@ -21,15 +23,13 @@ export async function getPaymentByTicketId (req: AuthenticatedRequest, res: Resp
 };
 
 export async function paymentProcess(req: AuthenticatedRequest, res: Response){
-    try{
-        const { userId } = req;
+    const { userId } = req;
         const {ticketId, cardData } = req.body;
-        if(!ticketId || !cardData){
-            return res.sendStatus(httpStatus.BAD_REQUEST);
-        }
+    try{
+        if(!ticketId || !cardData) return res.sendStatus(httpStatus.BAD_REQUEST);
         const payment = await paymentsService.paymentProcess(ticketId, userId, cardData);
         if (!payment){
-            return res.sendStatus(httpStatus.UNAUTHORIZED); // teste
+            return res.sendStatus(httpStatus.NOT_FOUND); 
         }
         return res.status(httpStatus.OK).send(payment)
     }  catch (error){

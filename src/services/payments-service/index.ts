@@ -1,14 +1,13 @@
-
-import ticketsRepository from "@/repositories/tickets-repository";
 import { notFoundError, unauthorizedError } from "@/errors";
-import enrollmentRepository from "@/repositories/enrollment-repository";
 import { CardPaymentParams, PaymentParams } from "@/protocols";
+import enrollmentRepository from "@/repositories/enrollment-repository";
 import paymentsRepository from "@/repositories/payments-repository";
+import ticketsRepository from "@/repositories/tickets-repository";
 
 async function verifyTicketAndEnrollment(ticketId: number, userId: number) {
     const ticket = await ticketsRepository.findTicketById(ticketId);
     if (!ticket) throw notFoundError();
-    const enrollment = await enrollmentRepository.findWithAddressByUserId(ticket.enrollmentId);
+    const enrollment = await enrollmentRepository.findById(ticket.enrollmentId);
     if (!enrollment) throw notFoundError();
     if (enrollment.userId !== userId) throw unauthorizedError();
 }
@@ -17,7 +16,7 @@ async function getPaymentByTicketId(userId: number, ticketId: number) {
     await verifyTicketAndEnrollment(ticketId, userId);
     const payment = await paymentsRepository.findPaymentByTicketId(ticketId);
     if (!payment) throw notFoundError();
-    return payment
+    return payment;
 }
 
 async function paymentProcess(ticketId: number, userId: number, cardData: CardPaymentParams) {
@@ -34,4 +33,4 @@ async function paymentProcess(ticketId: number, userId: number, cardData: CardPa
     return payment;
 }
 
-export default { getPaymentByTicketId, paymentProcess };
+export default { getPaymentByTicketId, paymentProcess, verifyTicketAndEnrollment };
