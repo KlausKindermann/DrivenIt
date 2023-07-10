@@ -29,14 +29,14 @@ export async function paymentProcess(req: AuthenticatedRequest, res: Response){
         }
         const payment = await paymentsService.paymentProcess(ticketId, userId, cardData);
         if (!payment){
-            return res.sendStatus(httpStatus.NOT_FOUND);
+            return res.sendStatus(httpStatus.UNAUTHORIZED); // teste
         }
         return res.status(httpStatus.OK).send(payment)
     }  catch (error){
         if (error.name === 'UnauthorizedError') {
             return res.sendStatus(httpStatus.UNAUTHORIZED);
         }
-        return res.sendStatus(httpStatus.NOT_FOUND);
+        return res.sendStatus(httpStatus.UNAUTHORIZED); // teste
     }
 };
 
