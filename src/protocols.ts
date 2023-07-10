@@ -55,7 +55,7 @@ export type CardPaymentParams = {
   number: number;
   name: string;
   expirationDate: Date;
-  cvv: number
+  cvv: number;
 };
 
 export type PaymentParams = Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>;
